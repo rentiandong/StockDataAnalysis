@@ -103,13 +103,11 @@ class QuarterlyEarningsPerShareIncrementFilter:
         assert number_of_quarters_to_check >= 2
         self._number_of_quarters_to_check = number_of_quarters_to_check
 
-    def get_symbols_by_quarterly_earnings_per_share_increase(self):
+    def get_symbols_by_quarterly_earnings_per_share_increase(self, symbols):
         def can_retry(exception):
             return isinstance(exception, TooManyRequestsException) or isinstance(exception,
                                                                                  requests.exceptions.ConnectionError)
 
-        symbols = RetryExecutor().execute_with_exponential_backoff_retry(
-            lambda: self._iex_api_adapter.get_all_symbols(), can_retry)
         counter = 1
         filtered_symbols = []
 
@@ -135,6 +133,49 @@ class QuarterlyEarningsPerShareIncrementFilter:
         return filtered_symbols
 
 
+class YearlyEarningsPerShareIncrementFilter:
+    def __init__(self,
+                 iex_api_adapter: IexApiAdapter,
+                 yearly_earnings_per_share_increment_threshold: float = 0.25,
+                 number_of_years_to_check: int = 3):
+        self._iex_api_adapter = iex_api_adapter
+
+        assert yearly_earnings_per_share_increment_threshold > 0
+        self._yearly_earnings_per_share_increment_threshold = yearly_earnings_per_share_increment_threshold
+
+        assert number_of_years_to_check >= 2
+        self._number_of_years_to_check = number_of_years_to_check
+
+    def get_symbols_by_yearly_earnings_per_share_increase(self, symbols: [str]):
+        def can_retry(exception):
+            return isinstance(exception, TooManyRequestsException) or isinstance(exception,
+                                                                                 requests.exceptions.ConnectionError)
+
+        counter = 1
+        filtered_symbols = []
+
+        for symbol in symbols:
+            # TODO: Make a better progress bar
+            print('{}/{}: {}'.format(counter, len(symbols), symbol))
+            counter += 1
+
+            quarterly_earnings_per_share = RetryExecutor().execute_with_exponential_backoff_retry(
+                lambda: self._iex_api_adapter.get_quarterly_earnings_per_share(symbol, self._number_of_years_to_check),
+                can_retry)
+
+            if len(quarterly_earnings_per_share) < self._number_of_years_to_check:
+                continue
+
+            if all(previous_yearly_earnings_per_share != 0 and
+                   (current_yearly_earnings_per_share - previous_yearly_earnings_per_share) /
+                   previous_yearly_earnings_per_share > self._yearly_earnings_per_share_increment_threshold
+                   for previous_yearly_earnings_per_share, current_yearly_earnings_per_share in zip(
+                       quarterly_earnings_per_share, quarterly_earnings_per_share[1:])):
+                filtered_symbols.append(symbol)
+
+        return filtered_symbols
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('--public_token', type=str, nargs='?', help='public token to IEX Cloud')
@@ -148,6 +189,16 @@ if __name__ == "__main__":
 
     iex_api = IexApi(public_token)
     iex_api_adapter = IexApiAdapter(iex_api)
-    quarterly_earnings_per_share_increment_filter = QuarterlyEarningsPerShareIncrementFilter(iex_api_adapter)
 
-    quarterly_earnings_per_share_increment_filter.get_symbols_by_quarterly_earnings_per_share_increase()
+    all_symbols = RetryExecutor().execute_with_exponential_backoff_retry(
+        lambda: iex_api_adapter.get_all_symbols(), lambda exception: isinstance(exception, TooManyRequestsException))
+
+    quarterly_earnings_per_share_increment_filter = QuarterlyEarningsPerShareIncrementFilter(iex_api_adapter)
+    symbols_filtered_by_quarterly_earnings_per_share_increment = quarterly_earnings_per_share_increment_filter.get_symbols_by_quarterly_earnings_per_share_increase(
+        all_symbols)
+
+    yearly_earnings_per_share_increment_filter = YearlyEarningsPerShareIncrementFilter(iex_api_adapter)
+    symbols_filtered_by_yearly_earnings_per_share_increment = yearly_earnings_per_share_increment_filter.get_symbols_by_yearly_earnings_per_share_increase(
+        symbols_filtered_by_quarterly_earnings_per_share_increment)
+
+    print(symbols_filtered_by_yearly_earnings_per_share_increment)
