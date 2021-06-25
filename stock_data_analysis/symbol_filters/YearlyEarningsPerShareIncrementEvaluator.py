@@ -21,8 +21,7 @@ class YearlyEarningsPerShareIncrementEvaluator(ISymbolEvaluator):
 
     def evaluate(self, symbol: str) -> bool:
         def can_retry(exception):
-            return isinstance(exception, TooManyRequestsException) or isinstance(exception,
-                                                                                 requests.exceptions.ConnectionError)
+            return isinstance(exception, (TooManyRequestsException, requests.exceptions.ConnectionError))
 
         yearly_earnings_per_share = RetryExecutor().execute_with_exponential_backoff_retry(
             lambda: self._iex_api_adapter.get_yearly_earnings_per_share(symbol, self._number_of_quarters_to_check),

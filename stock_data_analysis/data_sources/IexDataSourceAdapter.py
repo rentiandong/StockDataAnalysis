@@ -3,8 +3,8 @@ from ..exceptions.BadRequestException import BadRequestException
 from . import IexApi
 
 
-class IexDataSourceAdapter(IDataSourceAdapter.IDataSourceAdapter):
-    def __init__(self, iex_api: IexApi.IexApi):
+class IexDataSourceAdapter(IDataSourceAdapter):
+    def __init__(self, iex_api: IexApi):
         self._iex_api = iex_api
 
     def get_all_symbols(self):

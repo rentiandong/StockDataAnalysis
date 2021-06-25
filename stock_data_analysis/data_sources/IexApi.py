@@ -1,8 +1,10 @@
+import json
+
 import requests
-from . import HttpStatusCodes
+
 from stock_data_analysis.exceptions.BadRequestException import BadRequestException
 from stock_data_analysis.exceptions.TooManyRequestsException import TooManyRequestsException
-import json
+from . import HttpStatusCodes
 
 
 class IexApi:

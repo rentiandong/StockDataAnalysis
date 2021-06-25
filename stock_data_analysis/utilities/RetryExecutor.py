@@ -13,5 +13,5 @@ class RetryExecutor:
                 time.sleep(self._backoff_seconds)
                 self._backoff_seconds *= 2
                 return self.execute_with_exponential_backoff_retry(task, can_retry)
-            else:
-                raise exception
+
+            raise exception
