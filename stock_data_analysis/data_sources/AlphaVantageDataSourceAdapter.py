@@ -23,7 +23,7 @@ class AlphaVantageDataSourceAdapter(IDataSourceAdapter):
         quarterly_and_yearly_earnings_per_share = self._alpha_vantage_api.get_quarterly_and_annual_earnings_per_share(
             symbol)
 
-        if not len(quarterly_and_yearly_earnings_per_share):
+        if not quarterly_and_yearly_earnings_per_share:
             return []
 
         return [

@@ -28,8 +28,8 @@ class QuarterlyEarningsPerShareIncrementEvaluator(ISymbolEvaluator):
 
     def __str__(self):
         return '{}[data_source_adapter={}, threshold={}, number_of_quarters_to_check={}]'.format(
-            self.__name__, self._data_source_adapter.__name__, self._quarterly_earnings_per_share_increment_threshold,
-            self._number_of_quarters_to_check)
+            self.__class__.__name__, self._data_source_adapter.__name__,
+            self._quarterly_earnings_per_share_increment_threshold, self._number_of_quarters_to_check)
 
     def evaluate(self, symbol: str) -> bool:
         quarterly_earnings_per_share = self._data_source_adapter.get_quarterly_earnings_per_share(
@@ -51,8 +51,8 @@ class QuarterlyEarningsPerShareIncrementEvaluator(ISymbolEvaluator):
 
             if (current - previous) / previous < self._quarterly_earnings_per_share_increment_threshold:
                 self._logger.log_info(
-                    '{} disapproved symbol {} with earnings per share growth ({} - {}) / {} = {} less than threshold'.
-                    format(str(self), symbol, current, previous, previous, (current - previous) / previous))
+                    '{0} disapproved symbol {1} with growth ({2} - {3}) / {3} = {4} less than threshold'.format(
+                        str(self), symbol, current, previous, (current - previous) / previous))
                 return False
 
         self._logger.log_info('{} disapproved symbol {}'.format(str(self), symbol))
