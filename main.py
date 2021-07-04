@@ -3,35 +3,44 @@ import os
 
 from stock_data_analysis.data_sources.IexDataSourceAdapter import IexDataSourceAdapter
 from stock_data_analysis.data_sources.IexApi import IexApi
+from stock_data_analysis.data_sources.AlphaVantageDataSourceAdapter import AlphaVantageDataSourceAdapter
+from stock_data_analysis.data_sources.AlphaVantageApi import AlphaVantageApi
 from stock_data_analysis.exceptions.TooManyRequestsException import TooManyRequestsException
 from stock_data_analysis.utilities.RetryExecutor import RetryExecutor
 from stock_data_analysis.symbol_filters.SymbolFilter import SymbolFilter
 from stock_data_analysis.symbol_filters.QuarterlyEarningsPerShareIncrementEvaluator import QuarterlyEarningsPerShareIncrementEvaluator
 from stock_data_analysis.symbol_filters.YearlyEarningsPerShareIncrementEvaluator import YearlyEarningsPerShareIncrementEvaluator
 
-ENVIRONMENT_IEX_PUBLIC_TOKEN = os.environ.get('IEX_PUBLIC_TOKEN')
-
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument('--public_token', type=str, nargs='?', help='public token to IEX Cloud')
+    parser.add_argument('--iex-public-token', type=str, nargs='?', help='public token to IEX Cloud')
+    parser.add_argument('--alpha-vantage-token', type=str, nargs='?', help='API token of Alpha Vantage')
     args = parser.parse_args()
-    public_token = args.public_token
-    if public_token is None:
-        public_token = os.environ.get('IEX_PUBLIC_TOKEN')
 
-    if public_token is None:
+    iex_public_token = args.iex_public_token if args.iex_public_token else os.environ.get('IEX_PUBLIC_TOKEN')
+    alpha_vantage_token = args.alpha_vantage_token if args.alpha_vantage_token else os.environ.get('ALPHA_VANTAGE_TOKEN')
+
+    if iex_public_token is None:
         raise Exception('Missing IEX public token')
 
-    iex_api = IexApi(public_token)
+    if alpha_vantage_token is None:
+        raise Exception('Missing Alpha Vantage token')
+
+    iex_api = IexApi(iex_public_token)
     iex_api_adapter = IexDataSourceAdapter(iex_api)
 
-    quarterly_earnings_per_share_increment_evaluator = QuarterlyEarningsPerShareIncrementEvaluator(iex_api_adapter)
-    yearly_earnings_per_share_increment_evaluator = YearlyEarningsPerShareIncrementEvaluator(iex_api_adapter)
+    alpha_vantage_api = AlphaVantageApi(alpha_vantage_token)
+    alpha_vantage_api_adapter = AlphaVantageDataSourceAdapter(alpha_vantage_api)
+
+    quarterly_earnings_per_share_increment_evaluator = QuarterlyEarningsPerShareIncrementEvaluator(alpha_vantage_api_adapter)
+    yearly_earnings_per_share_increment_evaluator = YearlyEarningsPerShareIncrementEvaluator(alpha_vantage_api_adapter)
     symbol_filter = SymbolFilter(
         [yearly_earnings_per_share_increment_evaluator, quarterly_earnings_per_share_increment_evaluator])
 
     all_symbols = RetryExecutor().execute_with_exponential_backoff_retry(
         lambda: iex_api_adapter.get_all_symbols(), lambda exception: isinstance(exception, TooManyRequestsException))
 
-    filtered_symbols = symbol_filter.filter(all_symbols)
-    print(filtered_symbols)
+    for symbol in all_symbols:
+        if symbol_filter.filter(symbol):
+            # TODO write info to file
+            print(symbol)

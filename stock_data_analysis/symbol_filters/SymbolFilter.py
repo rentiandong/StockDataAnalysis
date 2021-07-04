@@ -8,7 +8,7 @@ class SymbolFilter:
     def add_evaluator(self, evaluator: ISymbolEvaluator) -> None:
         self._symbol_evaluators.append(evaluator)
 
-    def filter(self, symbols: list[str]) -> list[str]:  # pylint: disable=unsubscriptable-object
+    def filter_symbols(self, symbols: list[str]) -> list[str]:  # pylint: disable=unsubscriptable-object
         filtered_symbols = []
 
         for symbol in symbols:
@@ -19,3 +19,10 @@ class SymbolFilter:
             filtered_symbols.append(symbol)
 
         return filtered_symbols
+
+    def filter(self, symbol: str) -> bool:
+        for evaluator in self._symbol_evaluators:
+            if not evaluator.evaluate(symbol):
+                return False
+
+        return True
