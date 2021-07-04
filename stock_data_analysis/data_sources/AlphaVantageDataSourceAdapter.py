@@ -15,7 +15,8 @@ class AlphaVantageDataSourceAdapter(IDataSourceAdapter):
             symbol)
 
         return [
-            float(i['reportedEPS']) for i in quarterly_and_yearly_earnings_per_share['quarterlyEarnings'][-number_of_quarters:]
+            float(i['reportedEPS'])
+            for i in quarterly_and_yearly_earnings_per_share['quarterlyEarnings'][-number_of_quarters:]
         ]
 
     def get_yearly_earnings_per_share(self, symbol: str, number_of_years: int) -> [float]:
@@ -25,4 +26,7 @@ class AlphaVantageDataSourceAdapter(IDataSourceAdapter):
         if not len(quarterly_and_yearly_earnings_per_share):
             return []
 
-        return [float(i['reportedEPS']) for i in quarterly_and_yearly_earnings_per_share['annualEarnings'][-number_of_years:]]
+        return [
+            float(i['reportedEPS'])
+            for i in quarterly_and_yearly_earnings_per_share['annualEarnings'][-number_of_years:]
+        ]

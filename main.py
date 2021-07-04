@@ -1,5 +1,6 @@
 import argparse
 import os
+import sys
 
 from stock_data_analysis.data_sources.IexDataSourceAdapter import IexDataSourceAdapter
 from stock_data_analysis.data_sources.IexApi import IexApi
@@ -10,8 +11,12 @@ from stock_data_analysis.utilities.RetryExecutor import RetryExecutor
 from stock_data_analysis.symbol_filters.SymbolFilter import SymbolFilter
 from stock_data_analysis.symbol_filters.QuarterlyEarningsPerShareIncrementEvaluator import QuarterlyEarningsPerShareIncrementEvaluator
 from stock_data_analysis.symbol_filters.YearlyEarningsPerShareIncrementEvaluator import YearlyEarningsPerShareIncrementEvaluator
+from stock_data_analysis.utilities.Logger import Logger
 
 if __name__ == "__main__":
+    logger = Logger('root')
+    logger.log_info('running with command line arguments ' + str(sys.argv))
+
     parser = argparse.ArgumentParser()
     parser.add_argument('--iex-public-token', type=str, nargs='?', help='public token to IEX Cloud')
     parser.add_argument('--alpha-vantage-token', type=str, nargs='?', help='API token of Alpha Vantage')
@@ -40,7 +45,10 @@ if __name__ == "__main__":
     all_symbols = RetryExecutor().execute_with_exponential_backoff_retry(
         lambda: iex_api_adapter.get_all_symbols(), lambda exception: isinstance(exception, TooManyRequestsException))
 
+    logger.log_info('retrieved [{}] symbols'.format(len(all_symbols)))
     for symbol in all_symbols:
+        logger.log_info('processing symbol {}'.format(symbol))
+
         if symbol_filter.filter(symbol):
             # TODO write info to file
             print(symbol)
