@@ -1,0 +1,2 @@
+class NotSupportedByApiException(Exception):
+    pass
