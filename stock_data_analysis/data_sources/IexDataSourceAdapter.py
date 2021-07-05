@@ -1,6 +1,6 @@
-from .IDataSourceAdapter import IDataSourceAdapter
-from ..exceptions.BadRequestException import BadRequestException
-from .IexApi import IexApi
+from . import IDataSourceAdapter
+from . import IexApi
+from ..exceptions import BadRequestException
 
 
 class IexDataSourceAdapter(IDataSourceAdapter):

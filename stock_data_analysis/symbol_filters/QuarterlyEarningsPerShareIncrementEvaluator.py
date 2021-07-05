@@ -1,8 +1,8 @@
 import math
 
-from .ISymbolEvaluator import ISymbolEvaluator
-from ..data_sources.IDataSourceAdapter import IDataSourceAdapter
-from ..utilities.Logger import Logger
+from . import ISymbolEvaluator
+from ..data_sources import IDataSourceAdapter
+from ..utilities import Logger
 
 QUARTERS_IN_A_YEAR = 4
 

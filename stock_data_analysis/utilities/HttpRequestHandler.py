@@ -1,6 +1,6 @@
 import requests
 
-from .RetryExecutor import RetryExecutor
+from . import RetryExecutor
 
 
 class HttpRequestHandler:

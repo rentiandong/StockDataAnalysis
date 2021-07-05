@@ -1,6 +1,6 @@
 from .ISymbolEvaluator import ISymbolEvaluator
 from ..data_sources.IDataSourceAdapter import IDataSourceAdapter
-from ..utilities.Logger import Logger
+from ..utilities import Logger
 
 
 class YearlyEarningsPerShareIncrementEvaluator(ISymbolEvaluator):

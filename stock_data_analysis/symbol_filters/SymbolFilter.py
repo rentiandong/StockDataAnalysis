@@ -1,4 +1,4 @@
-from .ISymbolEvaluator import ISymbolEvaluator
+from . import ISymbolEvaluator
 
 
 class SymbolFilter:

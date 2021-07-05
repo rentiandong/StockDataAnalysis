@@ -1,2 +1,3 @@
 from .BadRequestException import BadRequestException
 from .TooManyRequestsException import TooManyRequestsException
+from .NotSupportedByApiException import NotSupportedByApiException

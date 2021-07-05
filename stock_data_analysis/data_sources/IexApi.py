@@ -2,11 +2,11 @@ import json
 
 import requests
 
-from stock_data_analysis.exceptions.BadRequestException import BadRequestException
-from stock_data_analysis.exceptions.TooManyRequestsException import TooManyRequestsException
 from . import HttpStatusCodes
-from ..utilities.RetryExecutor import RetryExecutor
-from ..utilities.HttpRequestHandler import HttpRequestHandler
+from ..exceptions import BadRequestException
+from ..exceptions import TooManyRequestsException
+from ..utilities import RetryExecutor
+from ..utilities import HttpRequestHandler
 
 
 class IexApi:

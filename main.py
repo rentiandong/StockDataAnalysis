@@ -2,16 +2,17 @@ import argparse
 import os
 import sys
 
-from stock_data_analysis.data_sources.IexDataSourceAdapter import IexDataSourceAdapter
-from stock_data_analysis.data_sources.IexApi import IexApi
-from stock_data_analysis.data_sources.AlphaVantageDataSourceAdapter import AlphaVantageDataSourceAdapter
-from stock_data_analysis.data_sources.AlphaVantageApi import AlphaVantageApi
-from stock_data_analysis.exceptions.TooManyRequestsException import TooManyRequestsException
-from stock_data_analysis.utilities.RetryExecutor import RetryExecutor
-from stock_data_analysis.symbol_filters.SymbolFilter import SymbolFilter
-from stock_data_analysis.symbol_filters.QuarterlyEarningsPerShareIncrementEvaluator import QuarterlyEarningsPerShareIncrementEvaluator
-from stock_data_analysis.symbol_filters.YearlyEarningsPerShareIncrementEvaluator import YearlyEarningsPerShareIncrementEvaluator
-from stock_data_analysis.utilities.Logger import Logger
+from stock_data_analysis.data_sources import IexDataSourceAdapter
+from stock_data_analysis.data_sources import IexApi
+from stock_data_analysis.data_sources import AlphaVantageDataSourceAdapter
+from stock_data_analysis.data_sources import AlphaVantageApi
+from stock_data_analysis.exceptions import TooManyRequestsException
+from stock_data_analysis.utilities import RetryExecutor
+from stock_data_analysis.symbol_filters import SymbolFilter
+from stock_data_analysis.symbol_filters import QuarterlyEarningsPerShareIncrementEvaluator
+from stock_data_analysis.symbol_filters import YearlyEarningsPerShareIncrementEvaluator
+from stock_data_analysis.utilities import Logger
+
 
 if __name__ == "__main__":
     logger = Logger('root')

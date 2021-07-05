@@ -1,12 +1,12 @@
 import json
 import logging
 
-from stock_data_analysis.exceptions.BadRequestException import BadRequestException
 from . import HttpStatusCodes
-from ..exceptions.TooManyRequestsException import TooManyRequestsException
+from ..exceptions import BadRequestException
+from ..exceptions import TooManyRequestsException
 from ..utilities import HttpRequestHandler
-from ..utilities.RetryExecutor import RetryExecutor
-from ..utilities.Logger import Logger
+from ..utilities import RetryExecutor
+from ..utilities import Logger
 
 
 class AlphaVantageApi:

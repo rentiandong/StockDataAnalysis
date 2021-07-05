@@ -1,6 +1,6 @@
-from .IDataSourceAdapter import IDataSourceAdapter
-from ..exceptions.NotSupportedByApiException import NotSupportedByApiException
-from .AlphaVantageApi import AlphaVantageApi
+from ..data_sources import IDataSourceAdapter
+from . import AlphaVantageApi
+from ..exceptions import NotSupportedByApiException
 
 
 class AlphaVantageDataSourceAdapter(IDataSourceAdapter):
