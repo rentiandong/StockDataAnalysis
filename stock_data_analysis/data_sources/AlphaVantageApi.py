@@ -43,4 +43,5 @@ class AlphaVantageApi:
         def can_retry(exception):
             return isinstance(exception, TooManyRequestsException)
 
-        return RetryExecutor().execute_with_exponential_backoff_retry(execute_api_request, can_retry)
+        return RetryExecutor(max_retries=2, initial_backoff_seconds=70).execute_with_exponential_backoff_retry(
+            execute_api_request, can_retry)

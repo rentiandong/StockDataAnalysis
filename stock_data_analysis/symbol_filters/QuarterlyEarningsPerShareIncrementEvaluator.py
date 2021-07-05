@@ -28,7 +28,7 @@ class QuarterlyEarningsPerShareIncrementEvaluator(ISymbolEvaluator):
 
     def __str__(self):
         return '{}[data_source_adapter={}, threshold={}, number_of_quarters_to_check={}]'.format(
-            self.__class__.__name__, self._data_source_adapter.__name__,
+            self.__class__.__name__, self._data_source_adapter.__class__.__name__,
             self._quarterly_earnings_per_share_increment_threshold, self._number_of_quarters_to_check)
 
     def evaluate(self, symbol: str) -> bool:

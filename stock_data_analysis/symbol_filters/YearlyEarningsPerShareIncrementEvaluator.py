@@ -11,23 +11,23 @@ class YearlyEarningsPerShareIncrementEvaluator(ISymbolEvaluator):
         self._data_source_adapter = data_source_adapter
 
         assert yearly_earnings_per_share_increment_threshold > 0
-        self._quarterly_earnings_per_share_increment_threshold = yearly_earnings_per_share_increment_threshold
+        self._yearly_earnings_per_share_increment_threshold = yearly_earnings_per_share_increment_threshold
 
         assert number_of_years_to_check >= 2
-        self._number_of_quarters_to_check = number_of_years_to_check
+        self._number_of_years_to_check = number_of_years_to_check
 
         self._logger = Logger(self.__class__.__name__)
 
     def __str__(self):
-        return '{}[data_source_adapter={}, threshold={}, number_of_quarters_to_check={}]'.format(
-            self.__class__.__name__, str(self._data_source_adapter),
-            self._quarterly_earnings_per_share_increment_threshold, self._number_of_quarters_to_check)
+        return '{}[data_source_adapter={}, threshold={}, number_of_years_to_check={}]'.format(
+            self.__class__.__name__, self._data_source_adapter.__class__.__name__,
+            self._yearly_earnings_per_share_increment_threshold, self._number_of_years_to_check)
 
     def evaluate(self, symbol: str) -> bool:
         yearly_earnings_per_share = self._data_source_adapter.get_yearly_earnings_per_share(
-            symbol, self._number_of_quarters_to_check)
+            symbol, self._number_of_years_to_check)
 
-        if len(yearly_earnings_per_share) < self._number_of_quarters_to_check:
+        if len(yearly_earnings_per_share) < self._number_of_years_to_check:
             self._logger.log_info('{} disapproved symbol {} with only {} yearly earnings per share data points'.format(
                 str(self), symbol, len(yearly_earnings_per_share)))
             return False
@@ -35,7 +35,7 @@ class YearlyEarningsPerShareIncrementEvaluator(ISymbolEvaluator):
         evaluation_result = all(
             previous_quarterly_earnings_per_share != 0 and
             (current_quarterly_earnings_per_share - previous_quarterly_earnings_per_share) /
-            previous_quarterly_earnings_per_share > self._quarterly_earnings_per_share_increment_threshold
+            previous_quarterly_earnings_per_share > self._yearly_earnings_per_share_increment_threshold
             for previous_quarterly_earnings_per_share, current_quarterly_earnings_per_share in zip(
                 yearly_earnings_per_share, yearly_earnings_per_share[1:]))
 

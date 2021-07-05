@@ -15,7 +15,7 @@ from stock_data_analysis.symbol_filters import YearlyEarningsPerShareIncrementEv
 from stock_data_analysis.utilities import Logger
 
 if __name__ == "__main__":
-    logger = Logger('root')
+    logger = Logger('main', print_to_console=True)
     logger.log_info('running with command line arguments ' + str(sys.argv))
 
     parser = argparse.ArgumentParser()
