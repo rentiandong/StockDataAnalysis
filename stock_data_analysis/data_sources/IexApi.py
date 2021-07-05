@@ -6,6 +6,7 @@ from stock_data_analysis.exceptions.BadRequestException import BadRequestExcepti
 from stock_data_analysis.exceptions.TooManyRequestsException import TooManyRequestsException
 from . import HttpStatusCodes
 from ..utilities.RetryExecutor import RetryExecutor
+from ..utilities.HttpRequestHandler import HttpRequestHandler
 
 
 class IexApi:
@@ -22,7 +23,7 @@ class IexApi:
 
     def get_all_symbols(self):
         def execute_api_call():
-            http_response = requests.get('{}/ref-data/symbols?token={}'.format(IexApi.SANDBOX_URI, self._public_token))
+            http_response = HttpRequestHandler.get('{}/ref-data/symbols?token={}'.format(IexApi.SANDBOX_URI, self._public_token))
 
             if http_response.status_code == HttpStatusCodes.BAD_REQUEST_STATUS_CODE:
                 raise BadRequestException()

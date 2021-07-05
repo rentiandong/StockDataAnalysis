@@ -6,6 +6,7 @@ import requests
 from stock_data_analysis.exceptions.BadRequestException import BadRequestException
 from . import HttpStatusCodes
 from ..exceptions.TooManyRequestsException import TooManyRequestsException
+from ..utilities import HttpRequestHandler
 from ..utilities.RetryExecutor import RetryExecutor
 from ..utilities.Logger import Logger
 
@@ -26,7 +27,7 @@ class AlphaVantageApi:
 
     def get_quarterly_and_annual_earnings_per_share(self, symbol: str) -> dict:
         def execute_api_request():
-            http_response = requests.get(AlphaVantageApi.URI.format('EARNINGS', symbol, self._api_key))
+            http_response = HttpRequestHandler.get(AlphaVantageApi.URI.format('EARNINGS', symbol, self._api_key))
             self._logger.log_info(
                 'Getting quarterly and annual earnings per share for symbol {} returned status code {} and response {}'.
                 format(symbol, http_response.status_code, http_response.text))

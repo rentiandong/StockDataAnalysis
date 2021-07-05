@@ -33,6 +33,3 @@ class Logger:
 
     def log_critical(self, message: str) -> None:
         self._logger.critical(message)
-
-
-logging.debug('123')
