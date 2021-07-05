@@ -17,13 +17,13 @@ class IexApi:
 
     @staticmethod
     def make_api_call_with_retry(execute_api_call):
-        # TODO generalize retry on `Connection Error`
         return RetryExecutor().execute_with_exponential_backoff_retry(
             execute_api_call, lambda exception: isinstance(exception, TooManyRequestsException))
 
     def get_all_symbols(self):
         def execute_api_call():
-            http_response = HttpRequestHandler.get('{}/ref-data/symbols?token={}'.format(IexApi.SANDBOX_URI, self._public_token))
+            http_response = HttpRequestHandler.get('{}/ref-data/symbols?token={}'.format(
+                IexApi.SANDBOX_URI, self._public_token))
 
             if http_response.status_code == HttpStatusCodes.BAD_REQUEST_STATUS_CODE:
                 raise BadRequestException()

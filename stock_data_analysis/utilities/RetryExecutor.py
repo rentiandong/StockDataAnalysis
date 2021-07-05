@@ -11,7 +11,7 @@ class RetryExecutor:
     def execute_with_exponential_backoff_retry(self, task, can_retry):
         try:
             return task()
-        except Exception as exception:
+        except Exception as exception: # pylint: disable=broad-except
             if not can_retry(exception) or not self._remaining_retries:
                 self._logger.log_info('Unable to retry {}'.format(task))
                 raise exception

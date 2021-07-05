@@ -1,8 +1,6 @@
 import json
 import logging
 
-import requests
-
 from stock_data_analysis.exceptions.BadRequestException import BadRequestException
 from . import HttpStatusCodes
 from ..exceptions.TooManyRequestsException import TooManyRequestsException
